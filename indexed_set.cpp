@@ -126,11 +126,16 @@ class indexed_set{
             return sum_childs(T -> l);
         }
 
-        int lower_bound_treap (Treap T, Ty k){
+        int lower_bound_treap (Treap T, Ty k, bool& found){
             if (not T) return 0;
 
-            if (T -> key >= k) return sum_childs(T -> l);
-            else return 1 + sum_childs(T -> l) + lower_bound_treap(T -> r, k);
+            if (T -> key >= k) {
+                int value = lower_bound_treap(T -> l, k, found);
+                if (found) return value;
+                found = true;
+                return sum_childs(T -> l);
+            }
+            else return 1 + sum_childs(T -> l) + lower_bound_treap(T -> r, k, found);
         }
 
     public:
@@ -154,8 +159,9 @@ class indexed_set{
             if (find(k)) erase_treap(root, k);
         }
 
-        int lower_bound (Ty i) { //returns the pos of the first >= i
-            return lower_bound_treap(root, i);
+        int lower_bound (Ty i) { //returns the pos of the first element >= i
+            bool found = false;
+            return lower_bound_treap(root, i, found);
         }
 
         Ty operator[](int i) {
