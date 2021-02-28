@@ -192,13 +192,18 @@ class indexed_multiset{
             return sum_childs(T -> l);
         }
 
-        int lower_bound_treap (Treap T, Ty k){
+        int lower_bound_treap (Treap T, Ty k, bool& found){ //EOOO WRONG
             propagate(T);
 
             if (not T) return 0;
 
-            if (T -> key >= k) return min(sum_childs(T -> l), lower_bound_treap(T -> l, k));
-            else return T -> repetitions + sum_childs(T -> l) + lower_bound_treap(T -> r, k);
+            if (T -> key >= k) {
+                int value = lower_bound_treap(T -> l, k, found);
+                if (found) return value;
+                found = true;
+                return sum_childs(T -> l);
+            }
+            else return T -> repetitions + sum_childs(T -> l) + lower_bound_treap(T -> r, k, found);
         }
 
         void getvalues_treap(Treap T, vector <pair <Ty, int> >& V){
@@ -236,8 +241,9 @@ class indexed_multiset{
             }
         }
 
-        int lower_bound (Ty i) { //returns the pos of the first >= i
-            return lower_bound_treap(root, i);
+        int lower_bound (Ty i) { //returns the pos of the first element >= i
+            bool found = false;
+            return lower_bound_treap(root, i, found);
         }
 
         Ty operator[](int i) {
