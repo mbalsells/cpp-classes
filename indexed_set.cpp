@@ -16,8 +16,6 @@ typedef vector <vi> vvi;
 template <typename Ty> 
 class indexed_set{
     private:
-        // Made by Max Balsells 2020
-    
         struct Node {
             Ty key;
             ll pr, childs;
@@ -53,7 +51,7 @@ class indexed_set{
             }  
         }
 
-        void merge (Treap& T, Treap L, Treap R) { // L < R (all values)
+        void merge (Treap& T, Treap L, Treap R) {
             if (not L) T = R;
             else if (not R) T = L;
 
@@ -138,9 +136,21 @@ class indexed_set{
             else return 1 + sum_childs(T -> l) + lower_bound_treap(T -> r, k, found);
         }
 
+        void copy_treap(Treap& T1, Treap T2){
+            if (not T2) return;
+            T1 = new Node{0, 0, 0, nullptr, nullptr};
+
+            T1 -> key = T2 -> key;
+            T1 -> pr = T2 -> pr;
+            T1 -> childs = T2 -> childs;
+
+            copy_treap(T1 -> l, T2 -> l);
+            copy_treap(T1 -> r, T2 -> r);
+        }
+
     public:
 
-        indexed_set () {root = nullptr;}
+        indexed_set (Treap T = nullptr) {root = T;}
 
         void clear() {root = nullptr;}
 
@@ -177,6 +187,14 @@ class indexed_set{
             if (not find(k)) return -1;
             return position_treap(root, k);
         }
+
+        indexed_set <Ty> copy(){
+            Treap root2 = new Node {0, 0, 0, nullptr, nullptr};
+            if (not root) return indexed_set <Ty>(nullptr);
+
+            copy_treap(root2, root);
+            return indexed_set <Ty>(root2);
+        } 
 };
 
 
